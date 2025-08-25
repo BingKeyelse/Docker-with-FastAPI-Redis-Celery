@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+*.whl
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode
+.vscode/
+
+# Logs
+*.log
+
+# Model files (LLM, embeddings)
+models/
+*.gguf
+*.bin
+*.pt
+*.ckpt
+
+# FAISS / Vector DB
+vectorstores/
+
+# Dataset, cache
+data/
+*.zip
+*.tar.gz
+*.tgz
+.cache/
+
+# OS-specific
+.DS_Store
+Thumbs.db

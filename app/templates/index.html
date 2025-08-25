@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nhập và gửi chữ</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <form id="inputForm" method="POST">
+        <input type="text" name="text_input" id="text_input" placeholder="Nhập chữ..." value="{{ user_input }}">
+        <button type="submit">Gửi</button>
+    </form>
+
+    <!-- Phần hiển thị kết quả trả về -->
+    <div class="result" id="result">
+        {% if msg %}{{ msg }}{% endif %}
+    </div>
+</div>
+
+<script>
+const form = document.getElementById("inputForm");
+const resultDiv = document.getElementById("result");
+
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const textInput = document.getElementById("text_input").value;
+    if (!textInput) return;
+
+    // Gửi lên backend
+    const response = await fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `text_input=${encodeURIComponent(textInput)}`
+    });
+
+    const data = await response.json();
+    const taskId = data.task_id;
+
+    // Kết nối WebSocket để nhận kết quả
+    // const ws = new WebSocket(`ws://192.168.1.121:8000/ws/${taskId}`);
+    const ws = new WebSocket(`ws://${window.location.host}/ws/${taskId}`);
+
+    ws.onmessage = function(event) {
+        resultDiv.innerText = event.data;
+    }
+
+    ws.onclose = function() {
+        console.log("WebSocket closed");
+    }
+});
+</script>
+
+
+</body>
+</html>
